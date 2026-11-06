@@ -6,7 +6,18 @@
 set -euo pipefail
 
 UUID="fedora-autotile@codefort.dev"
-REPO="lewiskirega/fedora-autotile"
+REPO="${FEDORA_AUTOTILE_REPO:-}"
+if [ -z "${REPO}" ]; then
+    if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        REMOTE_URL=$(git config --get remote.origin.url || true)
+        if [[ "${REMOTE_URL}" =~ github\.com[:/]([^/]+)/([^/.]+)(\.git)? ]]; then
+            REPO="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+        fi
+    fi
+fi
+if [ -z "${REPO}" ]; then
+    REPO="lewiskirega/jubilant-fishstick-Autotiling-"
+fi
 TARGET_DIR="${HOME}/.local/share/gnome-shell/extensions/${UUID}"
 TMP_DIR=""
 
@@ -51,10 +62,30 @@ fi
 log_info "Installed version: ${INSTALLED_VER}"
 
 # Fetch latest release info
-log_info "Querying GitHub Releases API for ${REPO}..."
-LATEST_JSON=$(curl -s "https://api.github.com/repos/${REPO}/releases/latest" || true)
+log_info "Querying latest release for ${REPO}..."
+AUTH_HEADER=()
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+    AUTH_HEADER=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+elif [ -n "${GH_TOKEN:-}" ]; then
+    AUTH_HEADER=(-H "Authorization: Bearer ${GH_TOKEN}")
+fi
 
+LATEST_JSON=$(curl -s "${AUTH_HEADER[@]}" "https://api.github.com/repos/${REPO}/releases/latest" 2>/dev/null || true)
 LATEST_TAG=$(echo "${LATEST_JSON}" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n 1 | cut -d'"' -f4 || true)
+
+# Rate-limit fallback: query web release redirect
+if [ -z "${LATEST_TAG}" ]; then
+    REDIRECT_URL=$(curl -sIL -o /dev/null -w "%{url_effective}\n" "https://github.com/${REPO}/releases/latest" 2>/dev/null || true)
+    if [[ "${REDIRECT_URL}" =~ /releases/tag/([^/]+)$ ]]; then
+        LATEST_TAG="${BASH_REMATCH[1]}"
+    fi
+fi
+
+# Fallback: query git tags if running inside repository
+if [ -z "${LATEST_TAG}" ] && command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+fi
+
 if [ -z "${LATEST_TAG}" ]; then
     log_error "Could not retrieve latest release from GitHub."
     exit 1

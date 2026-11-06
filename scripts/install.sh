@@ -6,7 +6,18 @@
 set -euo pipefail
 
 UUID="fedora-autotile@codefort.dev"
-REPO="lewiskirega/fedora-autotile"
+REPO="${FEDORA_AUTOTILE_REPO:-}"
+if [ -z "${REPO}" ]; then
+    if command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        REMOTE_URL=$(git config --get remote.origin.url || true)
+        if [[ "${REMOTE_URL}" =~ github\.com[:/]([^/]+)/([^/.]+)(\.git)? ]]; then
+            REPO="${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
+        fi
+    fi
+fi
+if [ -z "${REPO}" ]; then
+    REPO="lewiskirega/jubilant-fishstick-Autotiling-"
+fi
 TARGET_DIR="${HOME}/.local/share/gnome-shell/extensions/${UUID}"
 TMP_DIR=""
 
