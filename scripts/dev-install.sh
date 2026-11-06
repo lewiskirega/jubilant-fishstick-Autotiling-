@@ -31,3 +31,4 @@ if command -v gnome-extensions >/dev/null 2>&1; then
 fi
 
 echo "✓ Developer install completed to ${TARGET_DIR}."
+

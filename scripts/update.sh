@@ -124,3 +124,4 @@ echo "  Update complete."
 echo "  * Under Wayland, log out and back in to let GNOME Shell load the new code."
 echo "  * Under X11, press Alt+F2, type 'r', and press Enter."
 echo "=========================================================================="
+

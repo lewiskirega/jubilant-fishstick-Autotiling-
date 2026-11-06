@@ -81,3 +81,4 @@ clean: ## Remove build artifacts, compiled schemas, and temporary archives
 	@rm -f $(ROOT_DIR)/*.zip $(ROOT_DIR)/SHA256SUMS.txt $(ROOT_DIR)/RELEASE_NOTES.md
 	@rm -f $(SCHEMAS_DIR)/gschemas.compiled
 	@echo "✓ Clean complete."
+

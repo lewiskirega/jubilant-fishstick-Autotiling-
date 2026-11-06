@@ -33,3 +33,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `scripts/dev-install.sh` for development.
   - `Makefile` for developer workflow.
   - GitHub Actions CI/CD workflows for testing, release automation, and GNOME compatibility matrices.
+

@@ -81,3 +81,4 @@ git commit -m "feat(shortcuts): add dynamic window resize keybindings"
 3. **Run Checks**: Ensure `make check` and `make test` pass with 100% success before submitting.
 4. **Never Commit Secrets**: Never commit credentials, private SSH keys, personal tokens, or local build artifacts.
 5. **Fill out the PR Template**: Describe what was changed, how it was tested, and link related issues.
+

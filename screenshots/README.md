@@ -26,3 +26,4 @@ To ensure screenshots in the documentation remain clean, authentic, and consiste
 4. **Submission**:
    - Submit screenshots as part of a pull request.
    - Do **not** use AI-generated or mock UI screenshots.
+

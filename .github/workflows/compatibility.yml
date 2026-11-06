@@ -116,3 +116,4 @@ jobs:
           
           echo "Inspecting shell log for extension initialization:"
           grep -iE "(Fedora AutoTile|autotile)" shell.log || echo "Note: Check journal if available."
+

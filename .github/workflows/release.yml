@@ -120,3 +120,4 @@ jobs:
             fedora-autotile-${{ github.ref_name }}.zip
             fedora-autotile.zip
             SHA256SUMS.txt
+

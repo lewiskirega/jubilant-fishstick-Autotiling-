@@ -54,3 +54,4 @@ body:
       label: GNOME Shell Logs
       description: Run `journalctl -f -o cat /usr/bin/gnome-shell | grep -i autotile` and paste relevant logs here.
       render: shell
+

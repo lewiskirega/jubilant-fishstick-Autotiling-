@@ -37,3 +37,4 @@ Please provide:
 - **Initial Response**: Within 48 hours acknowledging receipt of your report.
 - **Assessment & Triage**: Within 5 business days with preliminary findings.
 - **Fix & Disclosure**: We will collaborate with you to develop a patch and coordinate a public release alongside an advisory.
+
