@@ -13,6 +13,7 @@ import { WindowTracker } from './src/core/windowTracker.js';
 import { TilingEngine } from './src/core/tilingEngine.js';
 import { KeyboardManager } from './src/managers/keyboardManager.js';
 import { AutoTileIndicator } from './src/ui/panelIndicator.js';
+import { FocusHint } from './src/ui/focusHint.js';
 
 export default class FedoraAutoTileExtension extends Extension {
     enable() {
@@ -67,6 +68,16 @@ export default class FedoraAutoTileExtension extends Extension {
             console.error(`[Fedora AutoTile] Failed to add panel indicator: ${e.message}`, e);
         }
 
+        // 6. Active Window Focus Hint
+        try {
+            this._focusHint = new FocusHint({
+                settings: this._settings,
+                windowTracker: this._windowTracker
+            });
+        } catch (e) {
+            console.error(`[Fedora AutoTile] Failed to initialize focus hint: ${e.message}`, e);
+        }
+
         // 6. Connect Settings Signals
         this._connectSettingsSignals();
 
@@ -111,10 +122,15 @@ export default class FedoraAutoTileExtension extends Extension {
         this._windowTracker?.disable();
         this._tilingEngine?.disable();
 
-        // 4. Remove Panel Indicator
+        // 4. Remove Panel Indicator & Focus Hint
         if (this._indicator) {
             this._indicator.destroy();
             this._indicator = null;
+        }
+
+        if (this._focusHint) {
+            this._focusHint.destroy();
+            this._focusHint = null;
         }
 
         // 5. Clean References

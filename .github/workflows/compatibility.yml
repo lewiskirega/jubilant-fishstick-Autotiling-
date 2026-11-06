@@ -10,7 +10,6 @@ on:
       - main
       - develop
   schedule:
-    # Run weekly on Sundays to catch upstream regressions
     - cron: '0 4 * * 0'
   workflow_dispatch:
 
@@ -18,8 +17,6 @@ jobs:
   static-compatibility-check:
     name: Static Schema & Syntax Check (GNOME 50 & 51)
     runs-on: ubuntu-latest
-    container:
-      image: fedora:latest
 
     steps:
       - name: Checkout Code
@@ -27,12 +24,8 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          dnf install -y \
-            gjs \
-            glib2-devel \
-            nodejs \
-            jq \
-            findutils
+          sudo apt-get update
+          sudo apt-get install -y gjs libglib2.0-bin nodejs jq
 
       - name: 1. Validate GNOME Target Versions in metadata.json
         run: |
@@ -58,62 +51,24 @@ jobs:
         run: |
           bash scripts/test.sh
 
-  gnome-runtime-test:
-    name: Headless GNOME Shell Runtime (GNOME ${{ matrix.gnome-version }})
+  fedora-container-check:
+    name: Fedora ${{ matrix.fedora-tag }} Container Test
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - gnome-version: "51"
-            container-image: "fedora:rawhide"
-          - gnome-version: "50"
-            container-image: "fedora:42"
-
-    container:
-      image: ${{ matrix.container-image }}
-      options: --security-opt seccomp=unconfined
+          - fedora-tag: "latest"
+          - fedora-tag: "rawhide"
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install Shell & Desktop Packages
-        continue-on-error: true
+      - name: Run Test Suite in Fedora ${{ matrix.fedora-tag }}
         run: |
-          dnf install -y \
-            gnome-shell \
-            mutter \
-            gjs \
-            glib2-devel \
-            nodejs \
-            zip \
-            unzip \
-            jq \
-            dbus-daemon \
-            mesa-dri-drivers \
-            xorg-x11-server-Xwayland || true
-
-      - name: Test Headless GNOME Shell Extension Loading
-        run: |
-          if ! command -v gnome-shell >/dev/null 2>&1; then
-            echo "GNOME Shell not available in container image ${{ matrix.container-image }}. Skipping live runtime test."
-            exit 0
-          fi
-
-          echo "Detected GNOME Shell version:"
-          gnome-shell --version
-
-          echo "Compiling schema and installing locally..."
-          UUID=$(jq -r '.uuid' metadata.json)
-          INSTALL_DIR="/root/.local/share/gnome-shell/extensions/${UUID}"
-          mkdir -p "${INSTALL_DIR}"
-          cp -r metadata.json extension.js prefs.js stylesheet.css schemas/ src/ "${INSTALL_DIR}/"
-          glib-compile-schemas --strict "${INSTALL_DIR}/schemas"
-
-          echo "Launching headless test session..."
-          timeout 5s dbus-run-session gnome-shell --headless --virtual-monitor 1920x1080 2>&1 | tee shell.log || true
-          
-          echo "Inspecting shell log for extension initialization:"
-          grep -iE "(Fedora AutoTile|autotile)" shell.log || echo "Note: Check journal if available."
-
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspace:Z" \
+            -w /workspace \
+            fedora:${{ matrix.fedora-tag }} \
+            bash -c "dnf install -y gjs glib2-devel nodejs findutils zip unzip jq && bash scripts/test.sh"

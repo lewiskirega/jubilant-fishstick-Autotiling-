@@ -128,6 +128,33 @@ export default class FedoraAutoTilePreferences extends ExtensionPreferences {
 
         gapsPage.add(gapsGroup);
 
+        const hintGroup = new Adw.PreferencesGroup({
+            title: 'Active Focus Border (Pop Shell Style)',
+            description: 'Highlight outline indicating the currently active window'
+        });
+
+        const showHintRow = new Adw.SwitchRow({
+            title: 'Show Active Window Hint',
+            subtitle: 'Draw a colored outline around the currently focused tiled window'
+        });
+        settings.bind('show-active-hint', showHintRow, 'active', Gio.SettingsBindFlags.DEFAULT);
+        hintGroup.add(showHintRow);
+
+        const hintWidthRow = new Adw.SpinRow({
+            title: 'Border Width',
+            subtitle: 'Border thickness in pixels',
+            adjustment: new Gtk.Adjustment({
+                lower: 1,
+                upper: 8,
+                step_increment: 1,
+                page_increment: 2
+            })
+        });
+        settings.bind('active-hint-border-width', hintWidthRow, 'value', Gio.SettingsBindFlags.DEFAULT);
+        hintGroup.add(hintWidthRow);
+
+        gapsPage.add(hintGroup);
+
         // -------------------------------------------------------------
         // Page 3: Floating Rules
         // -------------------------------------------------------------
@@ -233,6 +260,7 @@ export default class FedoraAutoTilePreferences extends ExtensionPreferences {
             { title: 'Focus Left / Right / Up / Down', key: 'focus-left', defaultKey: 'Super + H / L / K / J' },
             { title: 'Move Left / Right / Up / Down', key: 'move-left', defaultKey: 'Super + Shift + H / L / K / J' },
             { title: 'Toggle Floating Mode', key: 'toggle-floating', defaultKey: 'Super + G' },
+            { title: 'Increase / Decrease Window Size', key: 'increase-window-size', defaultKey: 'Super + Plus / Minus' },
             { title: 'Cycle Layout Strategy', key: 'cycle-layout', defaultKey: 'Super + Space' },
             { title: 'Move to Workspace', key: 'move-to-workspace-up', defaultKey: 'Super + Alt + Up / Down' },
             { title: 'Move to Monitor', key: 'move-to-monitor-left', defaultKey: 'Super + Ctrl + Left / Right' }

@@ -344,6 +344,35 @@ export class TilingEngine {
     }
 
     /**
+     * Adjust size of currently focused window
+     * @param {number} delta - Positive to increase size, negative to decrease
+     */
+    adjustFocusedWindowSize(delta) {
+        const display = global.display;
+        if (!display) return;
+
+        const currentFocus = display.get_focus_window();
+        if (!currentFocus) return;
+
+        const activeWs = global.workspace_manager?.get_active_workspace();
+        if (!activeWs) return;
+
+        const layoutId = this._workspaceManager.getLayout(
+            activeWs,
+            this._settings?.get_string('default-layout') ?? 'dynamic-grid'
+        );
+        const layout = this._layoutFactory.getLayout(layoutId);
+
+        if (layout && typeof layout.masterRatio === 'number') {
+            layout.masterRatio = Math.max(0.2, Math.min(0.85, layout.masterRatio + delta));
+            this.reflowNow();
+            return;
+        }
+
+        this.reflowNow();
+    }
+
+    /**
      * Toggle floating mode for currently focused window
      */
     toggleFloatingForFocused() {

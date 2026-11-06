@@ -165,3 +165,4 @@ export const FocusHint = GObject.registerClass({
         super.destroy();
     }
 });
+

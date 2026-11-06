@@ -75,6 +75,14 @@ export class KeyboardManager {
                 handler: () => this._tilingEngine.cycleLayout()
             },
             {
+                name: 'increase-window-size',
+                handler: () => this._tilingEngine.adjustFocusedWindowSize(0.05)
+            },
+            {
+                name: 'decrease-window-size',
+                handler: () => this._tilingEngine.adjustFocusedWindowSize(-0.05)
+            },
+            {
                 name: 'move-to-workspace-up',
                 handler: () => this._moveWindowToWorkspace(-1)
             },

@@ -22,6 +22,10 @@ help: ## Show this help message
 .PHONY: check
 check: lint ## Alias for lint
 
+.PHONY: pre-push
+pre-push: ## Run complete CI/CD quality gate before pushing to GitHub
+	@bash $(ROOT_DIR)/scripts/pre-push-check.sh
+
 .PHONY: lint
 lint: ## Validate JavaScript syntax and schema validity
 	@echo "==> Running syntax and validation checks..."

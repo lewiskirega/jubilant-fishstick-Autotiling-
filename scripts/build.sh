@@ -27,6 +27,7 @@ node --check "${ROOT_DIR}/src/core/windowTracker.js"
 node --check "${ROOT_DIR}/src/core/tilingEngine.js"
 node --check "${ROOT_DIR}/src/managers/keyboardManager.js"
 node --check "${ROOT_DIR}/src/ui/panelIndicator.js"
+node --check "${ROOT_DIR}/src/ui/focusHint.js"
 node --check "${ROOT_DIR}/extension.js"
 node --check "${ROOT_DIR}/prefs.js"
 

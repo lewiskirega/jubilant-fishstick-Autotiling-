@@ -44,6 +44,26 @@
       <description>Vertical spacing in pixels between adjacent window rows.</description>
     </key>
 
+    <!-- Active Window Focus Hint (Pop Shell Style) -->
+    <key name="show-active-hint" type="b">
+      <default>true</default>
+      <summary>Show active window focus hint</summary>
+      <description>Whether to render a colored highlight border around the active focused window.</description>
+    </key>
+
+    <key name="active-hint-color" type="s">
+      <default>'#3584e4'</default>
+      <summary>Active focus hint border color</summary>
+      <description>CSS color hex string for the active focus hint outline.</description>
+    </key>
+
+    <key name="active-hint-border-width" type="i">
+      <default>2</default>
+      <range min="1" max="8"/>
+      <summary>Active focus hint border width</summary>
+      <description>Pixel width of the active focus hint outline.</description>
+    </key>
+
     <!-- Floating Exceptions -->
     <key name="floating-applications" type="as">
       <default>[
@@ -127,6 +147,18 @@
       <default>['&lt;Super&gt;space']</default>
       <summary>Cycle layout</summary>
       <description>Shortcut to cycle active workspace layout algorithm.</description>
+    </key>
+
+    <key name="increase-window-size" type="as">
+      <default>['&lt;Super&gt;equal']</default>
+      <summary>Increase window size</summary>
+      <description>Shortcut to increase the relative size or ratio of the focused window.</description>
+    </key>
+
+    <key name="decrease-window-size" type="as">
+      <default>['&lt;Super&gt;minus']</default>
+      <summary>Decrease window size</summary>
+      <description>Shortcut to decrease the relative size or ratio of the focused window.</description>
     </key>
 
     <key name="move-to-workspace-up" type="as">
