@@ -1,7 +1,7 @@
 # Fedora AutoTile — Pop Shell Alternative for Modern GNOME
 
-[![CI](https://github.com/lewiskirega/fedora-autotile/actions/workflows/ci.yml/badge.svg)](https://github.com/lewiskirega/fedora-autotile/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/lewiskirega/fedora-autotile?include_prereleases&style=flat-square)](https://github.com/lewiskirega/fedora-autotile/releases)
+[![CI](https://github.com/lewiskirega/jubilant-fishstick-Autotiling-/actions/workflows/ci.yml/badge.svg)](https://github.com/lewiskirega/jubilant-fishstick-Autotiling-/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/lewiskirega/jubilant-fishstick-Autotiling-?include_prereleases&style=flat-square)](https://github.com/lewiskirega/jubilant-fishstick-Autotiling-/releases)
 [![GNOME Versions](https://img.shields.io/badge/GNOME-50%20%7C%2051-blue?style=flat-square)](https://www.gnome.org/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
 
@@ -105,8 +105,8 @@ Configurable shortcuts using GNOME Shell's native `Main.wm.addKeybinding`:
 Clone the repository and run the installation script:
 
 ```bash
-git clone https://github.com/lewiskirega/fedora-autotile.git
-cd fedora-autotile
+git clone https://github.com/lewiskirega/jubilant-fishstick-Autotiling-.git
+cd jubilant-fishstick-Autotiling-
 ./scripts/install.sh
 ```
 
@@ -117,9 +117,9 @@ Download and install the latest published release without cloning the repository
 ```bash
 # 1. Download release archive and checksums
 curl -fL -o fedora-autotile.zip \
-  https://github.com/lewiskirega/fedora-autotile/releases/latest/download/fedora-autotile.zip
+  https://github.com/lewiskirega/jubilant-fishstick-Autotiling-/releases/latest/download/fedora-autotile.zip
 curl -fL -o SHA256SUMS.txt \
-  https://github.com/lewiskirega/fedora-autotile/releases/latest/download/SHA256SUMS.txt
+  https://github.com/lewiskirega/jubilant-fishstick-Autotiling-/releases/latest/download/SHA256SUMS.txt
 
 # 2. Verify SHA256 checksum
 grep "fedora-autotile\.zip" SHA256SUMS.txt | sha256sum -c -
@@ -135,8 +135,8 @@ glib-compile-schemas --strict ~/.local/share/gnome-shell/extensions/fedora-autot
 ### Method 3: Installation from Source
 
 ```bash
-git clone https://github.com/lewiskirega/fedora-autotile.git
-cd fedora-autotile
+git clone https://github.com/lewiskirega/jubilant-fishstick-Autotiling-.git
+cd jubilant-fishstick-Autotiling-
 make install
 ```
 
@@ -221,7 +221,7 @@ gnome-extensions disable fedora-autotile@codefort.dev
 ```
 
 ### 5. Reporting Issues
-Please report issues and feature requests through our [GitHub Issues](https://github.com/lewiskirega/fedora-autotile/issues) using our structured templates.
+Please report issues and feature requests through our [GitHub Issues](https://github.com/lewiskirega/jubilant-fishstick-Autotiling-/issues) using our structured templates.
 
 ---
 
@@ -232,8 +232,8 @@ We welcome contributions! Please review [CONTRIBUTING.md](CONTRIBUTING.md) and o
 ### Quick Developer Setup
 ```bash
 # Clone repository
-git clone https://github.com/lewiskirega/fedora-autotile.git
-cd fedora-autotile
+git clone https://github.com/lewiskirega/jubilant-fishstick-Autotiling-.git
+cd jubilant-fishstick-Autotiling-
 
 # Validate syntax and schemas
 make check

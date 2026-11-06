@@ -22,8 +22,8 @@ All contributors and participants are expected to adhere to the [Code of Conduct
 
 ### Cloning the Repository
 ```bash
-git clone https://github.com/lewiskirega/fedora-autotile.git
-cd fedora-autotile
+git clone https://github.com/lewiskirega/jubilant-fishstick-Autotiling-.git
+cd jubilant-fishstick-Autotiling-
 ```
 
 ### Git Branching Model

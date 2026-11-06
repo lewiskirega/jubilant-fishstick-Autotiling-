@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Fedora AutoTile - Update Script
-# https://github.com/lewiskirega/fedora-autotile
+# https://github.com/lewiskirega/jubilant-fishstick-Autotiling-
 # ==============================================================================
 set -euo pipefail
 

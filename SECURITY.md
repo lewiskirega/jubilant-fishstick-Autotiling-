@@ -22,7 +22,7 @@ Only the latest stable release receives security updates and patches:
 Instead, please report potential security vulnerabilities privately through either:
 
 1. **GitHub Private Vulnerability Reporting**:
-   Navigate to the [Security Advisories tab](https://github.com/lewiskirega/fedora-autotile/security/advisories) on GitHub and click **"Report a vulnerability"**.
+   Navigate to the [Security Advisories tab](https://github.com/lewiskirega/jubilant-fishstick-Autotiling-/security/advisories) on GitHub and click **"Report a vulnerability"**.
 2. **Email**:
    Contact the maintainers directly at: **security@codefort.dev**
 
