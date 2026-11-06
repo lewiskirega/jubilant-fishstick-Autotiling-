@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.fedora-autotile" path="/org/gnome/shell/extensions/fedora-autotile/">
+
+    <!-- General Settings -->
+    <key name="enable-tiling" type="b">
+      <default>true</default>
+      <summary>Enable automatic tiling</summary>
+      <description>Whether the automatic tiling engine is currently active.</description>
+    </key>
+
+    <key name="default-layout" type="s">
+      <default>'dynamic-grid'</default>
+      <summary>Default layout</summary>
+      <description>Default tiling layout algorithm (dynamic-grid, master-stack, horizontal-split, vertical-split, adaptive-grid).</description>
+    </key>
+
+    <!-- Gap Settings -->
+    <key name="inner-gap" type="i">
+      <default>6</default>
+      <range min="0" max="64"/>
+      <summary>Inner gap size</summary>
+      <description>Spacing in pixels between adjacent tiled windows.</description>
+    </key>
+
+    <key name="outer-gap" type="i">
+      <default>6</default>
+      <range min="0" max="64"/>
+      <summary>Outer gap size</summary>
+      <description>Margin in pixels around the perimeter of the screen or work area.</description>
+    </key>
+
+    <key name="horizontal-gap" type="i">
+      <default>6</default>
+      <range min="0" max="64"/>
+      <summary>Horizontal gap spacing</summary>
+      <description>Horizontal spacing in pixels between adjacent window columns.</description>
+    </key>
+
+    <key name="vertical-gap" type="i">
+      <default>6</default>
+      <range min="0" max="64"/>
+      <summary>Vertical gap spacing</summary>
+      <description>Vertical spacing in pixels between adjacent window rows.</description>
+    </key>
+
+    <!-- Floating Exceptions -->
+    <key name="floating-applications" type="as">
+      <default>[
+        'org.gnome.Calculator',
+        'gnome-calculator',
+        'org.gnome.clocks',
+        'org.gnome.Calendar',
+        'org.gnome.Settings',
+        'gnome-control-center',
+        'pavucontrol',
+        'nm-connection-editor',
+        'ExtensionPreferences',
+        'fedora-autotile-prefs'
+      ]</default>
+      <summary>Floating application IDs or WM classes</summary>
+      <description>List of application IDs or WM classes that should always float by default.</description>
+    </key>
+
+    <!-- Keybindings -->
+    <key name="toggle-tiling" type="as">
+      <default>['&lt;Super&gt;y']</default>
+      <summary>Toggle automatic tiling shortcut</summary>
+      <description>Shortcut to enable or disable automatic window tiling.</description>
+    </key>
+
+    <key name="focus-left" type="as">
+      <default>['&lt;Super&gt;h', '&lt;Super&gt;Left']</default>
+      <summary>Focus window to the left</summary>
+      <description>Shortcut to navigate focus to the left window.</description>
+    </key>
+
+    <key name="focus-right" type="as">
+      <default>['&lt;Super&gt;l', '&lt;Super&gt;Right']</default>
+      <summary>Focus window to the right</summary>
+      <description>Shortcut to navigate focus to the right window.</description>
+    </key>
+
+    <key name="focus-up" type="as">
+      <default>['&lt;Super&gt;k', '&lt;Super&gt;Up']</default>
+      <summary>Focus window above</summary>
+      <description>Shortcut to navigate focus to the window above.</description>
+    </key>
+
+    <key name="focus-down" type="as">
+      <default>['&lt;Super&gt;j', '&lt;Super&gt;Down']</default>
+      <summary>Focus window below</summary>
+      <description>Shortcut to navigate focus to the window below.</description>
+    </key>
+
+    <key name="move-left" type="as">
+      <default>['&lt;Super&gt;&lt;Shift&gt;h', '&lt;Super&gt;&lt;Shift&gt;Left']</default>
+      <summary>Swap or move window to the left</summary>
+      <description>Shortcut to swap or move the active window to the left.</description>
+    </key>
+
+    <key name="move-right" type="as">
+      <default>['&lt;Super&gt;&lt;Shift&gt;l', '&lt;Super&gt;&lt;Shift&gt;Right']</default>
+      <summary>Swap or move window to the right</summary>
+      <description>Shortcut to swap or move the active window to the right.</description>
+    </key>
+
+    <key name="move-up" type="as">
+      <default>['&lt;Super&gt;&lt;Shift&gt;k', '&lt;Super&gt;&lt;Shift&gt;Up']</default>
+      <summary>Swap or move window up</summary>
+      <description>Shortcut to swap or move the active window up.</description>
+    </key>
+
+    <key name="move-down" type="as">
+      <default>['&lt;Super&gt;&lt;Shift&gt;j', '&lt;Super&gt;&lt;Shift&gt;Down']</default>
+      <summary>Swap or move window down</summary>
+      <description>Shortcut to swap or move the active window down.</description>
+    </key>
+
+    <key name="toggle-floating" type="as">
+      <default>['&lt;Super&gt;g']</default>
+      <summary>Toggle window floating</summary>
+      <description>Shortcut to toggle active window between floating and tiled mode.</description>
+    </key>
+
+    <key name="cycle-layout" type="as">
+      <default>['&lt;Super&gt;space']</default>
+      <summary>Cycle layout</summary>
+      <description>Shortcut to cycle active workspace layout algorithm.</description>
+    </key>
+
+    <key name="move-to-workspace-up" type="as">
+      <default>['&lt;Super&gt;&lt;Alt&gt;Up']</default>
+      <summary>Move window to previous workspace</summary>
+      <description>Shortcut to move focused window to the previous workspace.</description>
+    </key>
+
+    <key name="move-to-workspace-down" type="as">
+      <default>['&lt;Super&gt;&lt;Alt&gt;Down']</default>
+      <summary>Move window to next workspace</summary>
+      <description>Shortcut to move focused window to the next workspace.</description>
+    </key>
+
+    <key name="move-to-monitor-left" type="as">
+      <default>['&lt;Super&gt;&lt;Control&gt;Left']</default>
+      <summary>Move window to monitor on the left</summary>
+      <description>Shortcut to move focused window to the left monitor.</description>
+    </key>
+
+    <key name="move-to-monitor-right" type="as">
+      <default>['&lt;Super&gt;&lt;Control&gt;Right']</default>
+      <summary>Move window to monitor on the right</summary>
+      <description>Shortcut to move focused window to the right monitor.</description>
+    </key>
+
+  </schema>
+</schemalist>

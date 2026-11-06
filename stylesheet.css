@@ -1,0 +1,17 @@
+/* Fedora AutoTile GNOME Shell Theme Styles */
+
+.fedora-autotile-indicator-box {
+    spacing: 4px;
+}
+
+.fedora-autotile-indicator-active {
+    color: #3584e4;
+}
+
+.popup-subtitle-menu-item {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #888888;
+    padding-top: 6px;
+    padding-bottom: 2px;
+}
