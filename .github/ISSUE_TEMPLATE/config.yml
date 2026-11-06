@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/lewiskirega/fedora-autotile/discussions
+    about: Ask questions, share workflow tips, or discuss general tiling topics.
+  - name: Security Vulnerability Reporting
+    url: https://github.com/lewiskirega/fedora-autotile/security/advisories
+    about: Privately report a security vulnerability or critical defect.

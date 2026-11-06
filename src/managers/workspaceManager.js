@@ -73,3 +73,4 @@ export class WorkspaceManager {
         this._workspaceData.clear();
     }
 }
+

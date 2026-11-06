@@ -1,0 +1,122 @@
+name: Release Automation
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install System Dependencies
+        run: |
+          dnf install -y \
+            gjs \
+            glib2-devel \
+            nodejs \
+            zip \
+            unzip \
+            jq \
+            findutils \
+            coreutils \
+            git
+
+      - name: 1. Validate Tag and Version Synchronization
+        id: version_check
+        run: |
+          TAG_NAME="${GITHUB_REF_NAME}"
+          VERSION_NAME=$(jq -r '.["version-name"] // empty' metadata.json)
+          VERSION_NUM=$(jq -r '.version' metadata.json)
+
+          EXPECTED_TAG="v${VERSION_NAME:-$VERSION_NUM}"
+          echo "Current Tag: ${TAG_NAME}"
+          echo "Metadata Version Name: ${VERSION_NAME}"
+          echo "Expected Tag: ${EXPECTED_TAG}"
+
+          if [ "${TAG_NAME}" != "${EXPECTED_TAG}" ]; then
+            echo "ERROR: Git tag (${TAG_NAME}) does not match metadata.json version (${EXPECTED_TAG})"
+            exit 1
+          fi
+
+          echo "release_version=${VERSION_NAME:-$VERSION_NUM}" >> $GITHUB_OUTPUT
+
+      - name: 2. Compile Schemas & Run Full Test Suite
+        run: |
+          bash scripts/build.sh
+
+      - name: 3. Build Production Distribution ZIP
+        run: |
+          UUID=$(jq -r '.uuid' metadata.json)
+          RELEASE_ZIP="fedora-autotile-${GITHUB_REF_NAME}.zip"
+          CANONICAL_ZIP="fedora-autotile.zip"
+
+          echo "Building production package: ${RELEASE_ZIP}..."
+          glib-compile-schemas --strict schemas/
+
+          rm -f *.zip
+          zip -r "${RELEASE_ZIP}" \
+            metadata.json \
+            extension.js \
+            prefs.js \
+            stylesheet.css \
+            schemas/org.gnome.shell.extensions.fedora-autotile.gschema.xml \
+            schemas/gschemas.compiled \
+            src/
+
+          # Also create canonical zip for fixed-URL curl downloads
+          cp "${RELEASE_ZIP}" "${CANONICAL_ZIP}"
+
+          # Sanity check contents
+          if unzip -l "${RELEASE_ZIP}" | grep -E "(tests/|scripts/|\.git/|\.github/)"; then
+            echo "ERROR: Development or test files found in release ZIP!"
+            exit 1
+          fi
+
+      - name: 4. Generate SHA256 Checksums
+        run: |
+          RELEASE_ZIP="fedora-autotile-${GITHUB_REF_NAME}.zip"
+          sha256sum "${RELEASE_ZIP}" "fedora-autotile.zip" > SHA256SUMS.txt
+          echo "Generated SHA256 checksums:"
+          cat SHA256SUMS.txt
+
+      - name: 5. Extract Release Notes from CHANGELOG.md
+        id: extract_notes
+        run: |
+          TAG_RAW="${GITHUB_REF_NAME#v}"
+          echo "Extracting notes for version ${TAG_RAW}..."
+          
+          # Extract section from CHANGELOG.md matching ## [VERSION]
+          sed -n "/## \[${TAG_RAW}\]/,/## \[/p" CHANGELOG.md | sed '$d' > RELEASE_NOTES.md || true
+
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "Warning: Could not extract specific notes, fallback to header."
+            echo "## Fedora AutoTile ${GITHUB_REF_NAME}" > RELEASE_NOTES.md
+            echo "See [CHANGELOG.md](https://github.com/lewiskirega/fedora-autotile/blob/main/CHANGELOG.md) for full change history." >> RELEASE_NOTES.md
+          fi
+
+          cat RELEASE_NOTES.md
+
+      - name: 6. Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Fedora AutoTile ${{ github.ref_name }}"
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+          files: |
+            fedora-autotile-${{ github.ref_name }}.zip
+            fedora-autotile.zip
+            SHA256SUMS.txt

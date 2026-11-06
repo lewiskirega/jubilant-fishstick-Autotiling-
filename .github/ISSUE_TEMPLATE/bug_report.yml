@@ -1,0 +1,56 @@
+name: Bug Report
+description: Report a bug, crash, or unexpected tiling behavior in Fedora AutoTile
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue! Please ensure you have tested with the latest release of Fedora AutoTile.
+  - type: input
+    id: environment
+    attributes:
+      label: System Environment
+      description: Your OS, GNOME Shell version, and display protocol.
+      placeholder: "e.g. Fedora 45 / GNOME Shell 51.1 / Wayland / Intel Graphics"
+    validations:
+      required: true
+  - type: input
+    id: extension-version
+    attributes:
+      label: Fedora AutoTile Version
+      description: Version number from metadata.json or Extension Preferences.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Describe the exact steps to reproduce the issue.
+      placeholder: |
+        1. Enable automatic tiling
+        2. Open two terminal windows
+        3. Press Super+Shift+L to swap windows
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually occurred?
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: GNOME Shell Logs
+      description: Run `journalctl -f -o cat /usr/bin/gnome-shell | grep -i autotile` and paste relevant logs here.
+      render: shell

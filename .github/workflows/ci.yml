@@ -1,0 +1,110 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-test:
+    name: Lint, Test & Validate
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies
+        run: |
+          dnf install -y \
+            gjs \
+            glib2-devel \
+            nodejs \
+            zip \
+            unzip \
+            jq \
+            findutils \
+            coreutils
+
+      - name: 1. Validate Metadata JSON
+        run: |
+          echo "Validating metadata.json formatting and required keys..."
+          jq empty metadata.json
+          UUID=$(jq -r '.uuid' metadata.json)
+          if [ -z "$UUID" ] || [ "$UUID" = "null" ]; then
+            echo "ERROR: Missing required uuid in metadata.json"
+            exit 1
+          fi
+          echo "UUID: $UUID"
+          SHELL_VERS=$(jq -r '.["shell-version"][]' metadata.json)
+          echo "Declared shell versions: $SHELL_VERS"
+
+      - name: 2. Validate & Compile GSettings Schemas
+        run: |
+          echo "Validating XML schema with glib-compile-schemas..."
+          glib-compile-schemas --strict schemas/
+          if [ ! -f "schemas/gschemas.compiled" ]; then
+            echo "ERROR: Schema compilation failed to produce gschemas.compiled"
+            exit 1
+          fi
+          echo "GSettings schema compiled successfully."
+
+      - name: 3. Syntax Verification (ESM & GJS)
+        run: |
+          echo "Checking JavaScript syntax across all source files..."
+          node --check extension.js
+          node --check prefs.js
+          for file in $(find src/ tests/ -name "*.js"); do
+            echo "Checking $file..."
+            node --check "$file"
+          done
+
+      - name: 4. Run Automated Unit & Layout Tests
+        run: |
+          echo "Running tests in Node.js and native GJS..."
+          bash scripts/test.sh
+
+      - name: 5. Verify Clean Extension Packaging
+        run: |
+          echo "Packaging extension bundle..."
+          bash scripts/pack.sh
+          ZIP_NAME=$(ls fedora-autotile*.zip | head -n 1)
+          if [ ! -f "$ZIP_NAME" ]; then
+            echo "ERROR: Package ZIP was not generated!"
+            exit 1
+          fi
+          echo "Inspecting package contents: $ZIP_NAME"
+          unzip -l "$ZIP_NAME"
+
+          # Verify mandatory files exist inside package
+          unzip -l "$ZIP_NAME" | grep -q "metadata.json" || (echo "Missing metadata.json in ZIP" && exit 1)
+          unzip -l "$ZIP_NAME" | grep -q "extension.js" || (echo "Missing extension.js in ZIP" && exit 1)
+          unzip -l "$ZIP_NAME" | grep -q "prefs.js" || (echo "Missing prefs.js in ZIP" && exit 1)
+          unzip -l "$ZIP_NAME" | grep -q "schemas/org.gnome.shell.extensions.fedora-autotile.gschema.xml" || (echo "Missing gschema in ZIP" && exit 1)
+          unzip -l "$ZIP_NAME" | grep -q "schemas/gschemas.compiled" || (echo "Missing compiled schema in ZIP" && exit 1)
+
+          # Verify development/test files are properly excluded
+          if unzip -l "$ZIP_NAME" | grep -E "(tests/|scripts/|\.git/|\.github/)"; then
+            echo "ERROR: Development or test files found in release ZIP!"
+            exit 1
+          fi
+          echo "Package structure verified successfully."
+
+      - name: 6. Upload Package Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fedora-autotile-package
+          path: fedora-autotile*.zip
+          retention-days: 7

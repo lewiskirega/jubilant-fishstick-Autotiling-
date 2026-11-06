@@ -42,3 +42,4 @@ export class VerticalSplitLayout {
         return placements;
     }
 }
+

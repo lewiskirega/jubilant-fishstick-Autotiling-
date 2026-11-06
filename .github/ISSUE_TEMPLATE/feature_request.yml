@@ -1,0 +1,35 @@
+name: Feature Request
+description: Propose a new layout, keyboard shortcut, or tiling enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea to improve Fedora AutoTile? Please share your proposal!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Description
+      description: Is your feature request related to a problem or current limitation?
+      placeholder: "e.g. When using ultra-wide monitors, I want..."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered.
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to submit a pull request implementing this feature.

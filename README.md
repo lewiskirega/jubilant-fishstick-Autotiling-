@@ -1,42 +1,52 @@
 # Fedora AutoTile — Pop Shell Alternative for Modern GNOME
 
-**Fedora AutoTile** is a native GNOME Shell extension inspired by Pop Shell's automatic tiling and keyboard-driven window management, engineered from the ground up for modern GNOME (GNOME 50, GNOME 51+), GJS ES modules, Mutter, Wayland, and Libadwaita.
+[![CI](https://github.com/lewiskirega/fedora-autotile/actions/workflows/ci.yml/badge.svg)](https://github.com/lewiskirega/fedora-autotile/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/lewiskirega/fedora-autotile?include_prereleases&style=flat-square)](https://github.com/lewiskirega/fedora-autotile/releases)
+[![GNOME Versions](https://img.shields.io/badge/GNOME-50%20%7C%2051-blue?style=flat-square)](https://www.gnome.org/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0)
+
+**Fedora AutoTile** is a native GNOME Shell extension inspired by Pop Shell's automatic tiling and keyboard-driven window management, engineered from the ground up for modern GNOME (GNOME 50 and 51+), GJS ES modules, Mutter, Wayland, and Libadwaita.
+
+---
+
+## Why Fedora AutoTile?
+
+Pop Shell set the standard for automatic window tiling on GNOME desktops. However, modern GNOME releases (GNOME 45 through GNOME 51) introduced architectural overhauls: pure ES modules, unified Wayland event loops, strict Mutter geometry constraints, and updated Libadwaita components. Legacy tiling extensions frequently crash on GNOME 51 due to deprecated Clutter/St properties (such as `vertical` on `St.BoxLayout`), asynchronous Wayland configure races, and unmanaged signal leaks.
+
+**Fedora AutoTile** recreates the essential Pop Shell automatic tiling and keyboard-driven workflow as a native, modern, and reliable GNOME extension without external window managers or X11 hacks.
+
+### How It Differs from Basic Window Tiling
+- **Dynamic Grid Reflow**: Rather than simple 50/50 quarter-snapping, Fedora AutoTile dynamically partitions available screen space based on display aspect ratio and window count, ensuring zero wasted screen space.
+- **True Wayland Native**: Safe asynchronous geometry calculation with re-entrancy protection and debounced idle reflows to eliminate window move feedback loops.
+- **Window Minimum Size Awareness**: Queries application minimum dimensions (`get_min_size()`) so fixed-size tools or dialogs never overflow or overlap.
+- **Dock, Panel & Strut Respect**: Queries work area per monitor (`workspace.get_work_area_for_monitor()`) rather than raw monitor pixels.
+
+---
+
+## Screenshots
+
+> Visual previews and guidelines for community screenshots are located in [`screenshots/`](screenshots/README.md).
 
 ---
 
 ## Features
 
-- **Dynamic Grid Automatic Tiling (Default)**: Automatically tiles newly opened windows into a balanced, proportional grid and dynamically reflows remaining windows when applications close.
-- **5 Layout Engines**:
-  1. **Dynamic Grid** (Default): Responsive aspect-ratio aware binary/proportional grid.
-  2. **Master & Stack**: Primary focus window with vertically stacked secondary windows.
-  3. **Horizontal Split**: Equal vertical columns side-by-side.
-  4. **Vertical Split**: Equal horizontal rows stacked top-to-bottom.
-  5. **Adaptive Grid**: Adapts dynamically for standard and ultrawide displays (3-column center-master).
-- **Multi-Monitor Support**: Each monitor maintains an independent tiling context and work area.
-- **Per-Workspace Isolation**: Workspaces preserve their own tiling arrangements, layout choices, and window order.
-- **Intelligent Floating Window Management**:
-  - Automatically excludes dialogs, modals, transients, preferences, and fixed-size windows.
-  - Matches application IDs and WM classes against a customizable exception list.
-  - One-key toggle between floating and tiled mode (`Super + G`).
-- **Configurable Window Gaps**:
-  - Inner gaps, outer screen-edge margins, horizontal spacing, and vertical spacing.
-- **Top Panel Quick Menu Indicator**:
-  - Master toggle switch.
-  - Current layout indicator and live switcher.
-  - Quick access to settings.
-- **GTK4 / Libadwaita Preferences**: Clean, modern GNOME settings window.
-- **Wayland-Native & Clean Lifecycle**:
-  - Pure GJS ESM.
-  - Re-entrancy guards and idle debouncing to prevent feedback loops.
-  - Complete signal cleanup on extension disable or window close.
-  - Restores original window positions upon untile or extension disable.
+### 1. Automatic Tiling
+- **Dynamic Grid (Default)**: Automatically tiles newly opened windows into a balanced grid and dynamically reorganizes remaining windows when applications close.
+- **Multi-Monitor Contexts**: Independent tiling context per connected monitor.
+- **Per-Workspace Isolation**: Workspaces maintain independent layouts and window order.
+- **Window Restoral**: Restores pre-tiled geometry when untiled or when the extension is disabled.
 
----
+### 2. 5 Layout Engines
+Switch layouts on the fly without restarting GNOME Shell:
+1. **Dynamic Grid** (Default): Aspect-ratio aware proportional grid.
+2. **Master & Stack**: Primary master window with a secondary vertical stack.
+3. **Horizontal Split**: Equal vertical columns side-by-side.
+4. **Vertical Split**: Equal horizontal rows stacked top-to-bottom.
+5. **Adaptive Grid**: Adapts intelligently for ultrawide displays (21:9 / 32:9) with a 3-column center-master layout.
 
-## Keyboard Shortcuts
-
-All shortcuts are registered natively via GNOME Shell's `Main.wm.addKeybinding` and are fully customizable in GSettings / Preferences:
+### 3. Keyboard-Driven Navigation
+Configurable shortcuts using GNOME Shell's native `Main.wm.addKeybinding`:
 
 | Action | Default Shortcut |
 | :--- | :--- |
@@ -49,101 +59,197 @@ All shortcuts are registered natively via GNOME Shell's `Main.wm.addKeybinding` 
 | **Swap / Move Window Right** | `Super + Shift + L` / `Super + Shift + Right` |
 | **Swap / Move Window Up** | `Super + Shift + K` / `Super + Shift + Up` |
 | **Swap / Move Window Down** | `Super + Shift + J` / `Super + Shift + Down` |
-| **Toggle Window Floating Mode** | `Super + G` |
+| **Toggle Floating Mode** | `Super + G` |
 | **Cycle Layout Strategy** | `Super + Space` |
 | **Move to Previous Workspace** | `Super + Alt + Up` |
 | **Move to Next Workspace** | `Super + Alt + Down` |
 | **Move to Left Monitor** | `Super + Ctrl + Left` |
 | **Move to Right Monitor** | `Super + Ctrl + Right` |
 
+### 4. Intelligent Floating Window Management
+- Automatically excludes dialogs, modals, transients, preferences, and fixed-size utilities.
+- Configurable application ID and WM class exception list in GSettings.
+- Instant manual float toggle for any focused window (`Super + G`).
+
+### 5. Configurable Window Gaps
+- Inner gaps (spacing between windows).
+- Outer margins (border distance from screen edges).
+- Distinct horizontal and vertical gap controls.
+
+### 6. User Interface
+- **Top Panel Quick Menu Indicator**: Status indicator with master toggle, active layout picker, and preferences shortcut.
+- **GTK4 / Libadwaita Preferences**: Modern settings window with General, Gaps, Floating Rules, and Shortcuts pages.
+
 ---
 
-## Architecture
+## Compatibility
 
-```
-fedora-autotile/
-├── metadata.json                                          # Extension metadata (GNOME 50/51)
-├── extension.js                                           # Main extension entrypoint (ESM)
-├── prefs.js                                               # Libadwaita preferences window
-├── stylesheet.css                                         # Panel styling
-├── schemas/
-│   └── org.gnome.shell.extensions.fedora-autotile.gschema.xml
-├── src/
-│   ├── core/
-│   │   ├── geometry.js                                    # Pure rectangle math, gaps & clamping
-│   │   ├── windowState.js                                 # Window metadata, original geometry & signal tracking
-│   │   ├── windowTracker.js                               # Display signal observer & window filtering
-│   │   └── tilingEngine.js                                # Debounced tiling coordinator & reflow engine
-│   ├── layouts/
-│   │   ├── grid.js                                        # Dynamic Grid algorithm
-│   │   ├── masterStack.js                                 # Master & Stack algorithm
-│   │   ├── horizontal.js                                  # Horizontal Split algorithm
-│   │   ├── vertical.js                                    # Vertical Split algorithm
-│   │   ├── adaptive.js                                    # Adaptive / Ultrawide algorithm
-│   │   └── layoutFactory.js                               # Layout registry & switcher
-│   ├── managers/
-│   │   ├── workspaceManager.js                            # Per-workspace layout & context isolation
-│   │   ├── monitorManager.js                              # Multi-monitor work area discovery
-│   │   ├── keyboardManager.js                             # GSettings-backed keybinding manager
-│   │   └── floatingManager.js                             # Application floating rules & overrides
-│   ├── ui/
-│   │   └── panelIndicator.js                              # Top bar panel indicator & popup menu
-│   └── compatibility/
-│       └── gnome51.js                                     # GNOME 50/51 API version abstractions
-├── tests/
-│   ├── testGridLayout.js                                  # Automated tests for dynamic grid
-│   ├── testAllLayouts.js                                  # Automated tests for all 5 layouts
-│   └── testFloatingRules.js                               # Automated tests for floating rules
-└── scripts/
-    ├── build.sh                                           # Schema compiler & syntax checker
-    ├── test.sh                                            # Multi-runtime test runner (Node & GJS)
-    ├── install.sh                                         # User extension directory installer
-    ├── uninstall.sh                                       # Clean uninstaller
-    ├── pack.sh                                            # ZIP package generator
-    └── dev.sh                                             # Developer utility script
-```
+| Environment | Supported | Notes |
+| :--- | :--- | :--- |
+| **GNOME 51** | :white_check_mark: Yes | Tested on GNOME Shell 51.1 & Mutter 51.1 |
+| **GNOME 50** | :white_check_mark: Yes | Tested on GNOME Shell 50.x ESM |
+| **Fedora Workstation** | :white_check_mark: Yes | Primary development and test distribution |
+| **Wayland** | :white_check_mark: Yes | Recommended and fully supported natively |
+| **X11 / Xwayland** | :white_check_mark: Yes | Supported via standard Mutter frame APIs |
+
+### Known Limitations
+- Wayland requires a user session logout/login on initial installation so GNOME Shell discovers newly added extension directories in `~/.local/share/gnome-shell/extensions/`.
+- Fullscreen applications temporarily suspend tiling for that window until restored.
 
 ---
 
 ## Installation
 
-### Prerequisites
-- Fedora Workstation (or any modern Linux distribution with GNOME 50 or 51)
-- Wayland session
-- `gjs` (>= 1.80)
-- `glib2-devel` (`glib-compile-schemas`)
+### Method 1: One-Command Installation (Git Clone)
 
-### Quick Install
-To install into your user extensions directory (`~/.local/share/gnome-shell/extensions/fedora-autotile@fedoraproject.org`):
+Clone the repository and run the installation script:
 
 ```bash
-bash scripts/install.sh
+git clone https://github.com/lewiskirega/fedora-autotile.git
+cd fedora-autotile
+./scripts/install.sh
 ```
 
-Then enable the extension:
+### Method 2: Download Release ZIP (No Git Required)
+
+Download and install the latest published release without cloning the repository:
+
 ```bash
-gnome-extensions enable fedora-autotile@fedoraproject.org
+# 1. Download release archive and checksums
+curl -fL -o fedora-autotile.zip \
+  https://github.com/lewiskirega/fedora-autotile/releases/latest/download/fedora-autotile.zip
+curl -fL -o SHA256SUMS.txt \
+  https://github.com/lewiskirega/fedora-autotile/releases/latest/download/SHA256SUMS.txt
+
+# 2. Verify SHA256 checksum
+grep "fedora-autotile\.zip" SHA256SUMS.txt | sha256sum -c -
+
+# 3. Extract and install into GNOME extensions directory
+mkdir -p ~/.local/share/gnome-shell/extensions/fedora-autotile@codefort.dev
+unzip -q fedora-autotile.zip -d ~/.local/share/gnome-shell/extensions/fedora-autotile@codefort.dev
+
+# 4. Compile GSettings schemas
+glib-compile-schemas --strict ~/.local/share/gnome-shell/extensions/fedora-autotile@codefort.dev/schemas
 ```
 
-*Note: On Wayland, if GNOME Shell has not loaded user extensions yet in this session, log out and log back in once.*
+### Method 3: Installation from Source
 
-### Build & Package Distribution ZIP
 ```bash
-bash scripts/pack.sh
+git clone https://github.com/lewiskirega/fedora-autotile.git
+cd fedora-autotile
+make install
 ```
-This produces `fedora-autotile@fedoraproject.org.shell-extension.zip`.
 
 ---
 
-## Automated Testing
+## Enabling & Opening Preferences
 
-Run the test suite across both Node.js and native GJS:
-
+### Enable the Extension
 ```bash
-bash scripts/test.sh
+gnome-extensions enable fedora-autotile@codefort.dev
 ```
 
-All 3 automated test suites execute with 100% pass rates:
-1. **Dynamic Grid Calculations**: Single, dual, triple, 2x2, portrait screen aspect ratios, gap arithmetic, and minimum size constraints.
-2. **Layout Factory & All 5 Layouts**: Verifies geometry calculations and seamless layout cycling across Dynamic Grid, Master & Stack, Horizontal Split, Vertical Split, and Adaptive Grid.
-3. **Floating Rules & Exception Matcher**: Verifies automatic floating for dialogs, modals, transients, fixed-size windows, app ID matching, and manual float toggling.
+*(Note: Under Wayland, if GNOME Shell was running before the extension was placed on disk, please log out and log back in once).*
+
+### Open Preferences
+```bash
+gnome-extensions prefs fedora-autotile@codefort.dev
+```
+Or open the GNOME **Extensions** app and click the settings cog next to **Fedora AutoTile**.
+
+---
+
+## Updating
+
+Update to the latest release safely with verified checksums:
+
+```bash
+./scripts/update.sh
+```
+Or via Makefile:
+```bash
+make update
+```
+
+User preferences in GSettings are automatically preserved during updates.
+
+---
+
+## Uninstallation
+
+To uninstall Fedora AutoTile while keeping your preferences intact:
+
+```bash
+./scripts/uninstall.sh
+```
+
+To completely remove the extension and reset all preferences to default:
+
+```bash
+./scripts/uninstall.sh --reset-settings
+```
+Or via Makefile:
+```bash
+make uninstall
+```
+
+---
+
+## Troubleshooting
+
+### 1. Check GNOME Shell Version
+```bash
+gnome-shell --version
+```
+Ensure your version is GNOME 50 or 51+.
+
+### 2. Verify Extension Status
+```bash
+gnome-extensions info fedora-autotile@codefort.dev
+```
+
+### 3. Inspect Extension Logs
+View live journal logs for Fedora AutoTile:
+```bash
+journalctl -f -o cat /usr/bin/gnome-shell | grep -i autotile
+```
+
+### 4. Emergency Disable
+If an misbehaving application causes an issue, disable automatic tiling using the top panel switch, via keyboard (`Super + Y`), or via terminal:
+```bash
+gnome-extensions disable fedora-autotile@codefort.dev
+```
+
+### 5. Reporting Issues
+Please report issues and feature requests through our [GitHub Issues](https://github.com/lewiskirega/fedora-autotile/issues) using our structured templates.
+
+---
+
+## Development & Contributing
+
+We welcome contributions! Please review [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+### Quick Developer Setup
+```bash
+# Clone repository
+git clone https://github.com/lewiskirega/fedora-autotile.git
+cd fedora-autotile
+
+# Validate syntax and schemas
+make check
+
+# Run automated unit tests in Node and GJS
+make test
+
+# Install developer build
+make dev-install
+
+# Build release packages
+make release
+```
+
+---
+
+## License
+
+Fedora AutoTile is licensed under the [GNU General Public License v3.0](LICENSE).

@@ -19,3 +19,4 @@ node "${ROOT_DIR}/tests/testFloatingRules.js"
 gjs -m "${ROOT_DIR}/tests/testFloatingRules.js"
 
 echo "==> All automated tests PASSED on both Node.js and native GJS!"
+

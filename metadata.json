@@ -1,13 +1,14 @@
 {
   "name": "Fedora AutoTile",
   "description": "Native automatic tiling and keyboard-driven window management for modern GNOME.",
-  "uuid": "fedora-autotile@fedoraproject.org",
+  "uuid": "fedora-autotile@codefort.dev",
   "settings-schema": "org.gnome.shell.extensions.fedora-autotile",
   "gettext-domain": "fedora-autotile",
   "shell-version": [
     "50",
     "51"
   ],
-  "url": "https://github.com/fedora/fedora-autotile",
-  "version": 1
+  "url": "https://github.com/lewiskirega/fedora-autotile",
+  "version": 1,
+  "version-name": "0.1.0"
 }

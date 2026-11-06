@@ -47,3 +47,4 @@ export class LayoutFactory {
         return ids[(idx + 1) % ids.length];
     }
 }
+

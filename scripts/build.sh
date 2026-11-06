@@ -34,3 +34,4 @@ echo "--> Running automated test suite..."
 bash "${SCRIPT_DIR}/test.sh"
 
 echo "==> Build completed successfully!"
+

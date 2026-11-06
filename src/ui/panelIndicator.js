@@ -10,8 +10,9 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import { AVAILABLE_LAYOUTS } from '../layouts/layoutFactory.js';
 
-export const AutoTileIndicator = GObject.registerClass(
-class AutoTileIndicator extends PanelMenu.Button {
+export const AutoTileIndicator = GObject.registerClass({
+    GTypeName: 'FedoraAutoTilePanelIndicator',
+}, class AutoTileIndicator extends PanelMenu.Button {
     _init({ extension, tilingEngine, workspaceManager, settings }) {
         super._init(0.0, 'Fedora AutoTile');
 

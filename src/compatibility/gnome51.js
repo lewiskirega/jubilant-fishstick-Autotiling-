@@ -19,3 +19,4 @@ export function isGnome50OrNewer() {
     const ver = getShellVersion();
     return ver.major >= 50;
 }
+

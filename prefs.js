@@ -295,3 +295,4 @@ export default class FedoraAutoTilePreferences extends ExtensionPreferences {
         window.add(shortcutsPage);
     }
 }
+
