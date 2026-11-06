@@ -71,6 +71,34 @@ function runTests() {
     assert(!mgr.shouldFloat(browser), 'Browser is now tiled again');
     console.log('✓ Manual float toggle works');
 
+    // Test 8: Prefix and Pattern matching (Regex, Glob, Prefixes)
+    const mockSettings = {
+        get_strv: (key) => {
+            if (key === 'floating-applications') {
+                return [
+                    'class:Gimp*',
+                    'title:*Preferences*',
+                    'app:org.gnome.Software',
+                    'title:/^Picture-in-Picture$/'
+                ];
+            }
+            return [];
+        }
+    };
+    mgr.setSettings(mockSettings);
+
+    const gimpWindow = { id: 108, wmClass: 'Gimp-2.10', appId: 'gimp', title: 'GNU Image Manipulation Program' };
+    assert(mgr.shouldFloat(gimpWindow), 'class:Gimp* rule should match Gimp-2.10');
+    console.log('✓ Glob prefix rule (class:Gimp*) matches');
+
+    const pipWindow = { id: 109, wmClass: 'firefox', appId: 'firefox', title: 'Picture-in-Picture' };
+    assert(mgr.shouldFloat(pipWindow), 'Regex rule title:/^Picture-in-Picture$/ should match');
+    console.log('✓ Regex title rule matches');
+
+    const softwareWin = { id: 110, wmClass: 'gnome-software', appId: 'org.gnome.Software', title: 'Software' };
+    assert(mgr.shouldFloat(softwareWin), 'app:org.gnome.Software should match');
+    console.log('✓ App-ID prefix rule matches');
+
     console.log('All floating manager tests passed!\n');
 }
 

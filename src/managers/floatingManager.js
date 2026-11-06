@@ -21,6 +21,54 @@ export const DEFAULT_FLOATING_CLASSES = [
     'fedora-autotile-prefs'
 ];
 
+/**
+ * Helper to match a pattern against a string.
+ * Supports:
+ * - Explicit Regex: /pattern/ or /pattern/i
+ * - Glob / Wildcards: * or ?
+ * - Plain substring / exact case-insensitive match
+ * @param {string} pattern
+ * @param {string} text
+ * @returns {boolean}
+ */
+export function matchPattern(pattern, text) {
+    if (!text || typeof text !== 'string') return false;
+    pattern = pattern.trim();
+    if (!pattern) return false;
+
+    // Check for explicit regex /pattern/ or /pattern/i
+    if (pattern.startsWith('/') && pattern.lastIndexOf('/') > 0) {
+        try {
+            const lastSlash = pattern.lastIndexOf('/');
+            const expr = pattern.slice(1, lastSlash);
+            const flags = pattern.slice(lastSlash + 1) || 'i';
+            const rx = new RegExp(expr, flags);
+            return rx.test(text);
+        } catch {
+            // fallback to literal
+        }
+    }
+
+    // Check for wildcard glob pattern (contains * or ?)
+    if (pattern.includes('*') || pattern.includes('?')) {
+        try {
+            const escaped = pattern
+                .replace(/[-[\]{}()+.,\\^$|#\s]/g, '\\$&')
+                .replace(/\*/g, '.*')
+                .replace(/\?/g, '.');
+            const rx = new RegExp(`^${escaped}$`, 'i');
+            return rx.test(text);
+        } catch {
+            // fallback to literal
+        }
+    }
+
+    // Plain case-insensitive match (exact or substring)
+    const lowerP = pattern.toLowerCase();
+    const lowerT = text.toLowerCase();
+    return lowerT === lowerP || lowerT.includes(lowerP);
+}
+
 export class FloatingManager {
     /**
      * @param {object} [settings] - Optional GSettings wrapper
@@ -118,17 +166,35 @@ export class FloatingManager {
      * @returns {boolean}
      */
     _matchesRules(wmClass, appId, title) {
-        const lowerWm = wmClass.toLowerCase();
-        const lowerApp = appId.toLowerCase();
-        const lowerTitle = title.toLowerCase();
-
         for (const rule of this._cachedExceptions) {
-            const lowerRule = rule.toLowerCase().trim();
-            if (!lowerRule) continue;
+            const trimmed = rule.trim();
+            if (!trimmed) continue;
 
-            if (lowerWm === lowerRule || lowerWm.includes(lowerRule)) return true;
-            if (lowerApp === lowerRule || lowerApp.includes(lowerRule)) return true;
-            if (lowerTitle.includes(lowerRule)) return true;
+            // Prefix handling
+            if (trimmed.startsWith('class:') || trimmed.startsWith('wm:')) {
+                const target = trimmed.slice(trimmed.indexOf(':') + 1);
+                if (matchPattern(target, wmClass)) return true;
+                continue;
+            }
+
+            if (trimmed.startsWith('app:')) {
+                const target = trimmed.slice(4);
+                if (matchPattern(target, appId)) return true;
+                continue;
+            }
+
+            if (trimmed.startsWith('title:')) {
+                const target = trimmed.slice(6);
+                if (matchPattern(target, title)) return true;
+                continue;
+            }
+
+            // General match against wmClass, appId, or title
+            if (matchPattern(trimmed, wmClass) ||
+                matchPattern(trimmed, appId) ||
+                matchPattern(trimmed, title)) {
+                return true;
+            }
         }
 
         return false;
